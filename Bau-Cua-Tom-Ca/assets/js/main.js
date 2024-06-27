@@ -44,7 +44,7 @@ var figures = [
 // Khởi tạo trò chơi
 var user = {
     avatar: './assets/img/user.png',
-    coin: 10,
+    coin: 1000,
     betTable: 2
 }
 function updateData() {
@@ -80,13 +80,16 @@ var randomFigure = () => {
 btnStart.onclick = () => {
     // Kiểm tra người chơi đã đặt cược chưa?
     var flag = false;
-    for (var i = 0; i < figures.length; i++)
+    for (var i = 0; i < figures.length; i++) {
         if (figures[i].coin > 0) {
             flag = true;
             break;
         }
-    if (!flag)
+    }
+    if (!flag) {
         return;
+    }
+
     var wins = [];
     var t = 0;
     var timer = setInterval(() => {
@@ -102,6 +105,31 @@ btnStart.onclick = () => {
         }
     }, 100);
 }
+// btnStart.onclick = () => {
+//     // Kiểm tra người chơi đã đặt cược chưa?
+//     var flag = false;
+//     for (var i = 0; i < figures.length; i++)
+//         if (figures[i].coin > 0) {
+//             flag = true;
+//             break;
+//         }
+//     if (!flag)
+//         return;
+//     var wins = [];
+//     var t = 0;
+//     var timer = setInterval(() => {
+//         t += 100;
+//         if (t >= 500) {
+//             clearInterval(timer);
+//             winOfLose(wins);
+//         } else {
+//             wins = [randomFigure(), randomFigure(), randomFigure()];
+//             dices[0].querySelector('img').src = wins[0].image;
+//             dices[1].querySelector('img').src = wins[1].image;
+//             dices[2].querySelector('img').src = wins[2].image;
+//         }
+//     }, 100);
+// }
 // Đặt tiền
 dicesItem.forEach((e) => {
     e.onclick = (e) => {
@@ -114,20 +142,63 @@ dicesItem.forEach((e) => {
     }
 })
 // Xử lý thắng thua
+// function winOfLose(wins) {
+//     var winCoin = 0;
+//     for (var i = 0; i < wins.length; i++) {
+//         for (var j = 0; j < figures.length; j++) {
+//             if (wins[i].index == figures[j].index) {
+//                 winCoin += wins[i].coin * 2;
+//             }
+//         }
+//     }
+//     for (var j = 0; j < figures.length; j++) {
+//         figures[j].coin = 0;
+//     }
+//     user.coin += winCoin;
+//     updateData();
+//     if (winCoin > 0)
+//         alert("Bạn thắng " + winCoin + " đồng");
+// }
+
 function winOfLose(wins) {
     var winCoin = 0;
+    var winDetails = [];
+
     for (var i = 0; i < wins.length; i++) {
         for (var j = 0; j < figures.length; j++) {
             if (wins[i].index == figures[j].index) {
-                winCoin += wins[i].coin * 2;
+                var winAmount = wins[i].coin * 2;
+                winCoin += winAmount;
+                winDetails.push({
+                    figure: figures[j],
+                    amount: winAmount
+                });
             }
         }
     }
+
+    // Reset coin cho tất cả các vị trí
     for (var j = 0; j < figures.length; j++) {
         figures[j].coin = 0;
     }
+
     user.coin += winCoin;
     updateData();
-    if (winCoin > 0)
-        alert("Bạn thắng " + winCoin + " đồng");
+
+    if (winCoin > 0) {
+        var message = "Bạn thắng " + winCoin + " đồng<br>";
+        winDetails.forEach(detail => {
+            message += '<div style="display: flex; align-items: center; margin-bottom: 10px;">' +
+                       '<img src="' + detail.figure.image + '" style="width: 30px; height: 30px; margin-right: 10px;">' +
+                       'được ' + detail.amount + ' đồng</div>';
+        });
+
+        // Hiển thị thông báo với SweetAlert2
+        Swal.fire({
+            title: 'Kết quả',
+            html: message,
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    }
 }

@@ -10,10 +10,17 @@
     box-sizing: border-box;
 }
 
-body {
+/* body {
     background: center / cover no-repeat url("../img/background.jpg");
+} */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Đảm bảo chiều cao của body bằng chiều cao của viewport */
+    background: center / cover no-repeat url("../img/background.jpg");
+    background-size: cover; /* Kích thước hình nền sẽ bao phủ toàn bộ màn hình */
+    background-position: center; /* Đặt hình nền vào giữa màn hình */
 }
-
 main {
     position: relative;
     font-size: 16px;
